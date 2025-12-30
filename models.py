@@ -1,7 +1,7 @@
-from __future__ import annotations
 from typing import Annotated,List,Optional
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel, Relationship,Session,select
 from datetime import datetime
+from sqlalchemy.orm import Mapped
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
@@ -11,8 +11,8 @@ class User(SQLModel, table=True):
     password_hash: str = Field(nullable=False)
     role: str = Field(default="user", nullable=False)
 
-    items: List[Item] = Relationship(back_populates="owner")
-    tokens: List[Token] = Relationship(back_populates="user")
+    items: list["Item"] = Relationship(back_populates="owner")
+    tokens: list["Token"] = Relationship(back_populates="user")
 
 
 class Item(SQLModel, table=True):

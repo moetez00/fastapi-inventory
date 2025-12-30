@@ -4,13 +4,14 @@ from typing import Annotated,List,Optional
 import bcrypt
 import jwt
 from pydantic import BaseModel
-from models import SQLModel,User,Item,Token
+from models import SQLModel,User,Item,Token,Session,select
 from database import engine
 from datetime import datetime, timedelta, timezone
 import os
-SECRET_KEY=os.environ.get("SECRET_KEY")
+from dotenv import load_dotenv
+load_dotenv()
+SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
-
 app = FastAPI()
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
