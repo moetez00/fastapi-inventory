@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 
-@router.post("/users/")
+@router.post("/")
 def create_user(user:InputUser,session:SessionDep):
     existing_user=session.exec(select(User).where(User.username == user.username)).first()
     if existing_user:

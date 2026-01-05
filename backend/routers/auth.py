@@ -13,7 +13,7 @@ ALGORITHM = "HS256"
 
 
 
-@router.post("/login")
+@router.post("/")
 def login(user:InputUser,session:SessionDep,response:Response,access_token:str|None = Cookie(default=None)):
     print(access_token)
     if valid(access_token,session):
