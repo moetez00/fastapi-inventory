@@ -23,7 +23,7 @@ class Track(SQLModel, table=True):
     album: str = Field(nullable=True)
     duration_seconds: int = Field( nullable=False)
     created_at: datetime = Field(nullable=False,default_factory=datetime.utcnow)
-    playlistsTracks: list["PlaylistTracks"] = Relationship(back_populates="track")
+    playlistsTrack: list["PlaylistTrack"] = Relationship(back_populates="track")
 
 class Playlist(SQLModel,table=True):
     __tablename__="playlists"
@@ -46,8 +46,8 @@ class PlaylistTrack(SQLModel,table=True):
     position: int = Field(nullable=False)
     added_at: datetime = Field(default_factory=datetime.utcnow)
 
-    track: Track = Relationship(back_populates="playlists_tracks")
-    playlist: Playlist = Relationship(back_populates="playlists_tracks")
+    track: Track = Relationship(back_populates="playlistsTrack")
+    playlist: Playlist = Relationship(back_populates="playlistsTrack")
 
 class Token(SQLModel, table=True):
     __tablename__ = "tokens"
