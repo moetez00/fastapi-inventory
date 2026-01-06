@@ -55,7 +55,7 @@ class Token(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     token: str = Field(unique=True, nullable=False)
     user_id: int = Field(foreign_key="users.id", nullable=False)
-    expires_at: datetime = Field(nullable=False)
+    expires_at: datetime = Field(nullable=False,index=True)
 
     user: User = Relationship(back_populates="tokens")
 

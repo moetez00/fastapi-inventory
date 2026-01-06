@@ -1,51 +1,41 @@
 from fastapi import Depends, FastAPI, HTTPException, Query, Cookie,Response,APIRouter
 from typing import Annotated,List,Optional
-import bcrypt
-import jwt
-from sqlmodel import select
-from datetime import datetime, timedelta, timezone
-from ..models import SQLModel,User,Token
 from ..dependencies import SessionDep
-from ..schemas.auth import InputUser
-from ..services.auth import valid
-from ..config import SECRET_KEY
+from ..schemas.auth import UserInput
+from ..services.auth import InvalidCredentials,logout as logout_service,login as login_service
+from ..config import TOKEN_TTL
+
 router = APIRouter()
 
 
-ALGORITHM = "HS256"
 
 
 
-@router.post("/")
-def login(user:InputUser,session:SessionDep,response:Response,access_token:str|None = Cookie(default=None)):
-    print(access_token)
-    if valid(access_token,session):
-        return{"Error":"Already Logged In"}
-
-    existing_user=session.exec(select(User).where(User.username == user.username)).first()
-    if (not(existing_user)):
-        raise HTTPException(status_code=400, detail="Incorrect Username or Password!")
-    if not(bcrypt.checkpw(user.password.encode(), existing_user.password_hash.encode())):
-        raise HTTPException(status_code=400, detail="Incorrect Username or Password!")
+@router.post("/login")
+def login(user:UserInput,session:SessionDep,response:Response,access_token:str|None = Cookie(default=None)):
+    try:
+        encoded_jwt=login_service(user,session,access_token)
+        response.set_cookie(
+            key="access_token",
+            value=encoded_jwt,
+            httponly=True,
+            samesite="lax",
+            secure=False,
+            max_age=TOKEN_TTL,
+            path="/"
+        )
+        return {"message":"Logged in successfully"}
+    except InvalidCredentials:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
     
-
-    expire = datetime.now(timezone.utc) + timedelta(hours=24)
-    user_id=existing_user.id
-    to_encode={"user_id":user_id,"exp":int(expire.timestamp())}
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    newtoken=Token(token=encoded_jwt,user_id=user_id,expires_at=expire)
-    session.add(newtoken)
-    session.commit()
-    session.refresh(newtoken)
-
-    response.set_cookie(
+@router.post("/logout")
+def logout(session:SessionDep,response:Response,access_token:str|None = Cookie(default=None)):
+    logout_service(session,access_token)
+    response.delete_cookie(
         key="access_token",
-        value=encoded_jwt,
-        httponly=True,
-        samesite="lax",
+        path="/",
+        domain=None,
         secure=False,
-        max_age=60*60*24,
-        path="/"
+        samesite="lax",
     )
-
-    return {"token":newtoken.token,"exp":newtoken.expires_at}
+    return {"message":"Logged out successfully"}

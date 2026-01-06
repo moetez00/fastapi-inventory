@@ -10,6 +10,8 @@ app = FastAPI()
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
+
+
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
@@ -17,4 +19,5 @@ def on_startup():
 
 app.include_router(users_router,prefix="/users",tags=["users"])
 
-app.include_router(auth_router,prefix="/login",tags=["login"])
+app.include_router(auth_router,prefix="/auth",tags=["auth"])
+
