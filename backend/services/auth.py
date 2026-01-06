@@ -2,14 +2,13 @@ from ..dependencies import SessionDep
 from sqlmodel import select,delete
 from ..models import Token,User
 from datetime import datetime
-from ..config import TOKEN_TTL,SECRET_KEY
+from ..config import TOKEN_TTL,SECRET_KEY,ALGORITHM
 from ..schemas.auth import UserInput
 import jwt
 import bcrypt
 from datetime import datetime, timedelta, timezone
 
 
-ALGORITHM = "HS256"
 
 
 def cleanuptokens(session:SessionDep):

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from .database import engine
 from .config import *
-from .routers import users_router,auth_router
+from .routers import users_router,auth_router,tracks_router
 from .models import *
 from sqlmodel import SQLModel
 
@@ -21,3 +21,4 @@ app.include_router(users_router,prefix="/users",tags=["users"])
 
 app.include_router(auth_router,prefix="/auth",tags=["auth"])
 
+app.include_router(tracks_router,prefix="/tracks",tags=["tracks"])

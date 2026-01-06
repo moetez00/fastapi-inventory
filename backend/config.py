@@ -5,4 +5,6 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL")
+ALGORITHM = os.getenv("ALGORITHM")
+
 TOKEN_TTL=60*60*24
