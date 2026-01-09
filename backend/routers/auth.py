@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Query, Cookie,Response,APIRouter
+from fastapi import Depends, HTTPException, Query, Cookie,Response,APIRouter
 from typing import Annotated,List,Optional
 from ..dependencies import SessionDep
 from ..schemas.auth import UserInput
